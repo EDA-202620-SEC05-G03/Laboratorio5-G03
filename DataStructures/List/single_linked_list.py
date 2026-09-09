@@ -163,5 +163,12 @@ def sub_list(my_list, pos_i, num_elements):
     return nueva_lista
 
 
+#sort
+def default_sort_criteria (element_1, element_2):
+    sorted_val = False
+    if element_1 > element_2:
+        sorted_val = True
+    return sorted_val
+
 
 
