@@ -109,3 +109,27 @@ def sub_list(my_list, pos_i, num_elements):
     else:
         raise Exception('IndexError: list index out of range')
     return nueva_lista
+
+def default_sort_criteria (element_1, element_2):
+    
+    is_sorted = False
+    if element_1 < element_2:
+        is_sorted = True
+    
+    return is_sorted
+
+def selection_sort (my_list, sort_crit):
+    n = size(my_list)
+    
+    for i in range(1, n+1):
+        min_index = i
+        
+        for j in range (i+1, n+1):
+            elem = get_element(my_list, j)
+            min_elem = get_element(my_list, min_index)
+            
+            if sort_crit
+        
+    
+    
+        
