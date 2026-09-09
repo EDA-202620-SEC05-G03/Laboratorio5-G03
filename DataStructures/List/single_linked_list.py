@@ -161,3 +161,7 @@ def sub_list(my_list, pos_i, num_elements):
             nueva_lista = add_last(nueva_lista, node["info"])
             node = node["next"]
     return nueva_lista
+
+
+
+
