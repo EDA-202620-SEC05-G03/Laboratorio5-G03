@@ -60,10 +60,9 @@ def new_logic(user_data_structure):
                "book_tags": None}
 
     # Usamos la estructura seleccionada para inicializar todas las listas
-    # TODO: completar la creacion de la lista de autores y tags
     catalog["books"] = data_structure.new_list()
-    catalog["authors"] = None 
-    catalog["tags"] = None 
+    catalog["authors"] = data_structure.new_list() 
+    catalog["tags"] = data_structure.new_list() 
     catalog["book_tags"] = data_structure.new_list()
 
     return catalog
@@ -112,7 +111,7 @@ def load_books_tags(catalog):
     """
     Carga la información que asocia tags con libros.
     """
-    bookstagsfile = None  # TODO: completar la ruta del archivo de BOOKS_TAGS
+    bookstagsfile = data_dir + "/book_tags.csv"
     input_file = csv.DictReader(open(bookstagsfile, encoding='utf-8'))
     for booktag in input_file:
         add_book_tag(catalog, booktag)
@@ -231,7 +230,7 @@ def get_books_by_author(catalog, author_name):
     """
     pos_author = pos_author = data_structure.is_present(
         catalog['authors'], author_name, compare_authors)
-    if pos_author > 0:
+    if pos_author >= 0:
         author = data_structure.get_element(catalog['authors'], pos_author)
         return author
     return None
@@ -282,17 +281,16 @@ def count_books_by_tag(catalog, tag_name):
 #  -------------------------------------------------------------
 
 
-# TODO: completar las funciones para obtener el tamaño de la lista de libros, autores y tagas
 def book_size(catalog):
-    pass
+    return data_structure.size(catalog['books'])
 
 
 def author_size(catalog):
-    pass
+    return data_structure.size(catalog['authors'])
 
 
 def tag_size(catalog):
-    pass
+    return data_structure.size(catalog['tags'])
 
 
 def book_tag_size(catalog):
@@ -320,9 +318,9 @@ def compare_tag_names(name, tag):
 
 
 def compare_book_ids(id, book):
-    if id == book["goodreads_book_id"]:
+    if id == book["book_id"]:
         return 0
-    elif id > book["goodreads_book_id"]:
+    elif id > book["book_id"]:
         return 1
     else:
         return -1
@@ -333,8 +331,12 @@ def compare_book_ids(id, book):
 
 
 def eval_ratings(book1, book2):
-    # TODO: completar la función para comparar dos libros por su rating promedio, el libro 1 debe ser mayor al 2.
-    pass
+    
+    libro1 = float(book1['average_rating'])
+    libro2 = float(book2['average_rating'])
+    
+    return data_structure.default_sort_criteria(libro2, libro1) 
+    
 
 #  -----------------------------------------------
 # Funciones de ordenamiento
@@ -346,22 +348,20 @@ def sort_books(catalog):
     sorted_books = catalog["book_sublist"]
     start_time = get_time()
 
-    # TODO: cambie el None para completar las opciones para selection_sort, insertion_sort, shell_sort, merge_sort y quick_sort 
-
     if sort_algorithm == 1:
-        sorted_books_s = None  
+        sorted_books_s = data_structure.selection_sort(sorted_books, eval_ratings)
 
     elif sort_algorithm == 2:
-        sorted_books_s = None
+        sorted_books_s = data_structure.insertion_sort(sorted_books, eval_ratings)
 
     elif sort_algorithm == 3:
-        sorted_books_s = None
+        sorted_books_s = data_structure.shell_sort(sorted_books, eval_ratings)
 
     elif sort_algorithm == 4:
-        sorted_books_s = None
+        sorted_books_s = data_structure.merge_sort(sorted_books, eval_ratings)
 
     elif sort_algorithm == 5:
-        sorted_books_s = None
+        sorted_books_s = data_structure.quick_sort(sorted_books, eval_ratings)
 
     end_time = get_time()
     delta = delta_time(start_time, end_time)
@@ -375,6 +375,7 @@ def sort_books(catalog):
 
 def add_book(catalog, book):
     # Se adiciona el libro a la lista de libros
+    book['book_id'] = int(book['book_id'])
     book["goodreads_book_id"] = int(book["goodreads_book_id"])
     data_structure.add_last(catalog['books'], book)
     # Se obtienen los autores del libro
@@ -394,7 +395,7 @@ def add_book_author(catalog, author_name, book):
     authors = catalog['authors']
     pos_author = data_structure.is_present(
         authors, author_name, compare_authors)
-    if pos_author > 0:
+    if pos_author >= 0:
         author = data_structure.get_element(authors, pos_author)
     else:
         author = new_author(author_name)

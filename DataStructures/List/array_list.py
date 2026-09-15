@@ -110,6 +110,10 @@ def sub_list(my_list, pos_i, num_elements):
         raise Exception('IndexError: list index out of range')
     return nueva_lista
 
+# =====================
+# DEFAULT SORT CRITERIA
+# =====================
+
 def default_sort_criteria (element_1, element_2):
     
     is_sorted = False
@@ -118,18 +122,148 @@ def default_sort_criteria (element_1, element_2):
     
     return is_sorted
 
+# ==============
+# SELECTION SORT
+# ==============
+
 def selection_sort (my_list, sort_crit):
     n = size(my_list)
     
-    for i in range(1, n+1):
+    for i in range(0, n-1):
         min_index = i
-        
-        for j in range (i+1, n+1):
+        for j in range (i+1, n):
             elem = get_element(my_list, j)
             min_elem = get_element(my_list, min_index)
-            
-            if sort_crit
+            if sort_crit(elem, min_elem) is True:
+                min_index = j
+        if min_index != i:
+            my_list = exchange(my_list, i, min_index)
+
+    return my_list
+
+# ==============
+# INSERTION SORT
+# ==============
         
+def insertion_sort (my_list, sort_crit):
     
+    for i in range(1, size(my_list)):
+        elem_actual = get_element(my_list, i)
+        j = i
+        while j > 0 and sort_crit(elem_actual, get_element(my_list, j-1)):
+            my_list = exchange(my_list, j-1, j)
+            j -= 1
     
+    return my_list
+
+# ==========
+# SHELL SORT
+# ==========
+
+def shell_sort(my_list, sort_crit):
+    
+    gap = size(my_list) // 2
+    print(f"gap = {gap}")
+    while gap > 0:
+        for i in range(gap, size(my_list)):
+            elem_actual = get_element(my_list, i)
+            print(f"elem_actual={elem_actual}, i={i}")
+            j = i
+            print(f"j={j}")
+            print(f"j= {j}, gap={gap}")
+            while j >= gap and sort_crit(elem_actual, get_element(my_list, j-gap)):
+                
+                my_list = exchange(my_list, j-gap, j)
+                j -= gap
+        gap = gap // 2
         
+    return  my_list
+
+# ==========
+# MERGE SORT
+# ==========
+
+def merge_sort(my_list, sort_crit):
+    if size(my_list) <= 1:
+        return my_list
+    aux_list = sub_list(my_list, 0, size(my_list))
+    merge_sort_rec(my_list, aux_list, sort_crit, 0, size(my_list) - 1)
+    return my_list
+
+
+def merge_sort_rec(my_list, aux_list, sort_crit, low, high):
+    if high <= low:
+        return
+    mid = (high + low) // 2
+    merge_sort_rec(my_list, aux_list, sort_crit, low, mid)
+    merge_sort_rec(my_list, aux_list, sort_crit, mid + 1, high)
+    merge(my_list, aux_list, sort_crit, low, mid, high)
+
+
+def merge(my_list, aux_list, sort_crit, low, mid, high):
+    for k in range(low, high + 1):
+        valor = get_element(my_list, k)
+        aux_list = change_info(aux_list, k, valor)
+
+    i = low
+    j = mid + 1
+    k = low
+
+    while i <= mid and j <= high:
+        elem_izquierda = get_element(aux_list, i)
+        elem_derecha = get_element(aux_list, j)
+
+        if sort_crit(elem_izquierda, elem_derecha):
+            my_list = change_info(my_list, k, elem_izquierda)
+            i += 1
+        else:
+            my_list = change_info(my_list, k, elem_derecha)
+            j += 1
+
+        k += 1
+
+    while i <= mid:
+        elem_izquierda = get_element(aux_list, i)
+        my_list = change_info(my_list, k, elem_izquierda)
+        i += 1
+        k += 1
+
+    while j <= high:
+        elem_derecha = get_element(aux_list, j)
+        my_list = change_info(my_list, k, elem_derecha)
+        j += 1
+        k += 1
+
+    return my_list
+
+# ==========
+# QUICK SORT
+# ==========
+
+def quick_sort(my_list, sort_crit): 
+    if size(my_list) <= 1:
+        return my_list
+    quick_sort_rec(my_list, sort_crit, 0, size(my_list) - 1)
+    return my_list
+    
+
+def quick_sort_rec(my_list, sort_crit, low, high): 
+    if high <= low: 
+        return my_list
+    
+    pos_pivote = partition(my_list, sort_crit, low, high) 
+    quick_sort_rec(my_list, sort_crit, low, pos_pivote - 1) 
+    quick_sort_rec(my_list, sort_crit, pos_pivote + 1, high)
+    
+def partition(my_list, sort_crit, low, high): 
+    pivote = get_element(my_list, low)
+    i = low 
+    
+    for j in range(low + 1, high + 1): 
+        if sort_crit(get_element(my_list, j), pivote):
+            i += 1 
+            exchange(my_list, i, j) 
+    
+    exchange(my_list, low, i) 
+    return i
+

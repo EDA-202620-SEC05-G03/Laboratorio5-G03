@@ -53,7 +53,7 @@ def print_menu():
     Menu de usuario
     """
     print("Bienvenido")
-    #TODO: agregar opción 0 para escoger el tipo de estructura de datos y opción 5 para seleccionar el algoritmo de ordenamiento
+    print("0- Escoger el tipo de estructura de datos")
     print("1- Cargar información en el catálogo")
     print("2- Consultar la información de un libro")
     print("3- Consultar los libros de un autor")
@@ -118,9 +118,7 @@ def print_book_info(book):
     Imprime los mejores libros solicitados
     """
     if book:
-        print('Titulo: ' + book['title'] + '  ISBN: ' +
-                  book['isbn'] + ' Rating: ' + book['average_rating'] +
-                    ' Work text reviews count : ' + book['work_text_reviews_count'])
+        print(f'Titulo: {book['title']} \n ISBN: {book['isbn']} \n Rating: {book['average_rating']} \n Work text reviews count: {book['work_text_reviews_count']} \n')
     else:
         print('No se encontraron libros')
 
@@ -145,8 +143,7 @@ def print_sort_results(sort_books, sample=3):
         if sample > 0:
             # Obtener el libro en la posición actual.
             book = data_structure.get_element(sorted_books, book_pos)
-            # TODO: Completar la lógica para imprimir la información del libro.
-            # Disminuir el contador de la muestra.
+            print_book_info(book)
             sample -= 1
 
 # variables utiles para el programa
@@ -160,6 +157,8 @@ algo_str = """Seleccione el algoritmo de ordenamiento recursivo:
 1. Selection Sort
 2. insertion Sort
 3. shell Sort
+4. Merge Sort
+5. Quick Sort
 """
                  
 exit_opt_lt = ("s", "S", "1", True, "true", "True", "si", "Si", "SI")
@@ -191,7 +190,11 @@ def main():
         elif int(inputs[0]) == 1:
             print("Cargando información de los archivos ....")
             bk, at, tg, bktg = load_data(control)
-            #TODO: imprimir la cantidad de libros, autores, géneros y asociaciones de géneros a libros cargados
+            print('Libros cargados: ' + str(bk))
+            print('Autores cargados: ' + str(at))
+            print('Géneros cargados: ' + str(tg))
+            print('Asociación de Géneros a Libros cargados: ' +
+                  str(bktg))
 
         elif int(inputs[0]) == 2:
             number = input("Ingrese el id del libro que desea buscar: ")
@@ -222,7 +225,7 @@ def main():
         elif int(inputs[0]) == 7:
             print("Ordenando los libros por rating ...")
             result = logic.sort_books(control)
-            #TODO:imprimir el resultado del ordenamiento 
+            print_sort_results(result)
             print("Tiempo de ejecución:", f"{result[1]:.3f}", "[ms]")
 
         elif int(inputs[0]) == 8:
