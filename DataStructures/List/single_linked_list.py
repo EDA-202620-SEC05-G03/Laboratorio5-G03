@@ -306,14 +306,13 @@ def quick_sort_rec(my_list, sort_crit, low, high):
     quick_sort_rec(my_list, sort_crit, pos_pivote + 1, high)
     
 def partition(my_list, sort_crit, low, high): 
-    pivote = get_element(my_list, low)
-    i = low 
+    pivote = get_element(my_list, high)
+    i = low - 1
     
-    for j in range(low + 1, high + 1): 
+    for j in range(low, high): 
         if sort_crit(get_element(my_list, j), pivote):
             i += 1 
             exchange(my_list, i, j) 
     
-    exchange(my_list, low, i) 
-    return i
-
+    exchange(my_list, i + 1, high) 
+    return i + 1
