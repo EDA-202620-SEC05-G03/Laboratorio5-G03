@@ -163,14 +163,11 @@ def insertion_sort (my_list, sort_crit):
 def shell_sort(my_list, sort_crit):
     
     gap = size(my_list) // 2
-    print(f"gap = {gap}")
+
     while gap > 0:
         for i in range(gap, size(my_list)):
             elem_actual = get_element(my_list, i)
-            print(f"elem_actual={elem_actual}, i={i}")
             j = i
-            print(f"j={j}")
-            print(f"j= {j}, gap={gap}")
             while j >= gap and sort_crit(elem_actual, get_element(my_list, j-gap)):
                 
                 my_list = exchange(my_list, j-gap, j)
