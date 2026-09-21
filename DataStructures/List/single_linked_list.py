@@ -1,3 +1,5 @@
+from DataStructures.List import list_node as ln
+
 def new_list():
     new_list = {
         "first": None,
@@ -236,55 +238,59 @@ def shell_sort(my_list, sort_crit):
 def merge_sort(my_list, sort_crit):
     if size(my_list) <= 1:
         return my_list
-    aux_list = sub_list(my_list, 0, size(my_list))
-    merge_sort_rec(my_list, aux_list, sort_crit, 0, size(my_list) - 1)
+
+    my_list['first'] = merge_sort_rec(my_list['first'], sort_crit)
+    
+    nodo = my_list['first']
+    
+    while nodo['next'] is not None:
+        nodo = nodo['next']
+    my_list['last'] = nodo
+    
     return my_list
+    
+def merge_sort_rec(head, sort_crit):
 
+    if head is None or head['next'] is None:
+        return head
+    
+    slow = head
+    fast = head['next']
 
-def merge_sort_rec(my_list, aux_list, sort_crit, low, high):
-    if high <= low:
-        return
-    mid = (high + low) // 2
-    merge_sort_rec(my_list, aux_list, sort_crit, low, mid)
-    merge_sort_rec(my_list, aux_list, sort_crit, mid + 1, high)
-    merge(my_list, aux_list, sort_crit, low, mid, high)
+    while fast is not None and fast['next'] is not None:
+        slow = slow['next']
+        fast = fast['next']['next']
+    
+    mitad = slow['next']
+    slow['next'] = None
+    
+    izquierda = merge_sort_rec(head, sort_crit)
+    derecha = merge_sort_rec(mitad, sort_crit)
+    
+    return merge(izquierda, derecha, sort_crit)
 
-
-def merge(my_list, aux_list, sort_crit, low, mid, high):
-    for k in range(low, high + 1):
-        valor = get_element(my_list, k)
-        aux_list = change_info(aux_list, k, valor)
-
-    i = low
-    j = mid + 1
-    k = low
-
-    while i <= mid and j <= high:
-        elem_izquierda = get_element(aux_list, i)
-        elem_derecha = get_element(aux_list, j)
-
-        if sort_crit(elem_izquierda, elem_derecha):
-            my_list = change_info(my_list, k, elem_izquierda)
-            i += 1
+def merge(izquierda, derecha, sort_crit):
+    
+    dummy = ln.new_single_node(None)
+    cola = dummy
+    
+    while izquierda is not None and derecha is not None:
+        if sort_crit(izquierda['info'], derecha['info']):
+            cola['next'] = izquierda
+            izquierda = izquierda['next']
         else:
-            my_list = change_info(my_list, k, elem_derecha)
-            j += 1
+            cola['next'] = derecha
+            derecha = derecha['next']
+        cola = cola['next']
+    
+    if izquierda is not None:
+        cola['next'] = izquierda
+    else:
+        cola['next'] = derecha
+        
+    return dummy['next']
+     
 
-        k += 1
-
-    while i <= mid:
-        elem_izquierda = get_element(aux_list, i)
-        my_list = change_info(my_list, k, elem_izquierda)
-        i += 1
-        k += 1
-
-    while j <= high:
-        elem_derecha = get_element(aux_list, j)
-        my_list = change_info(my_list, k, elem_derecha)
-        j += 1
-        k += 1
-
-    return my_list
 
 # ==========
 # QUICK SORT
@@ -293,26 +299,78 @@ def merge(my_list, aux_list, sort_crit, low, mid, high):
 def quick_sort(my_list, sort_crit): 
     if size(my_list) <= 1:
         return my_list
-    quick_sort_rec(my_list, sort_crit, 0, size(my_list) - 1)
-    return my_list
-    
 
-def quick_sort_rec(my_list, sort_crit, low, high): 
-    if high <= low: 
-        return my_list
+    my_list['first'] = quick_sort_rec(my_list['first'], sort_crit)
+
+    nodo = my_list['first']
+    while nodo['next'] is not None:
+        nodo = nodo['next']
     
-    pos_pivote = partition(my_list, sort_crit, low, high) 
-    quick_sort_rec(my_list, sort_crit, low, pos_pivote - 1) 
-    quick_sort_rec(my_list, sort_crit, pos_pivote + 1, high)
+    my_list['last'] = nodo
     
-def partition(my_list, sort_crit, low, high): 
-    pivote = get_element(my_list, high)
-    i = low - 1
+    return my_list
+
+def quick_sort_rec(head, sort_crit):
     
-    for j in range(low, high): 
-        if sort_crit(get_element(my_list, j), pivote):
-            i += 1 
-            exchange(my_list, i, j) 
+    if head is None or head['next'] is None:
+        return head
     
-    exchange(my_list, i + 1, high) 
-    return i + 1
+    pivote, menores_head, mayores_head = partition(head, sort_crit)
+    
+    menores_ordenados = quick_sort_rec(menores_head, sort_crit)
+    mayores_ordenados = quick_sort_rec(mayores_head, sort_crit)
+    
+    if menores_ordenados is None:
+        nueva_cabeza = pivote
+    else:
+        nueva_cabeza = menores_ordenados
+        cola = menores_ordenados
+        while cola['next'] is not None:
+            cola = cola['next']
+        cola['next'] = pivote
+        
+    pivote['next'] = mayores_ordenados
+    
+    return nueva_cabeza
+
+def partition(head, sort_crit):
+    
+    penultimo = None
+    actual = head
+    
+    while actual['next'] is not None:
+        penultimo = actual
+        actual = actual['next']
+    
+    pivote = actual
+    penultimo['next'] = None
+    
+    menores_head = None
+    menores_cola = None
+    mayores_head = None
+    mayores_cola = None
+    
+    nodo = head
+    
+    while nodo is not None:
+        siguiente = nodo['next']
+        nodo['next'] = None
+        
+        if sort_crit(nodo['info'], pivote['info']):
+            if menores_head is None:
+                menores_head = nodo
+                menores_cola = nodo
+            else:
+                menores_cola['next'] = nodo
+                menores_cola = nodo
+        else:
+            if mayores_head is None:
+                mayores_head = nodo
+                mayores_cola = nodo
+            else:
+                mayores_cola['next'] = nodo
+                mayores_cola = nodo
+        
+        nodo = siguiente
+        
+    return pivote, menores_head, mayores_head
