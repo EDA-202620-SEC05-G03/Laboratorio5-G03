@@ -181,33 +181,60 @@ def default_sort_criteria (element_1, element_2):
 # ==============
 
 def selection_sort(my_list, sort_crit):
-    n = size(my_list)
-    
-    for i in range(0, n-1):
-        min_index = i
-        for j in range (i+1, n):
-            elem = get_element(my_list, j)
-            min_elem = get_element(my_list, min_index)
-            if sort_crit(elem, min_elem) is True:
-                min_index = j
-        if min_index != i:
-            my_list = exchange(my_list, i, min_index)
 
+    actual = my_list['first']
+    
+    while actual is not None and actual['next'] is not None:
+        min_node = actual
+        runner = actual['next']
+        
+        while runner is not None:
+            if sort_crit(runner['info'], min_node['info']):
+                min_node = runner
+            runner = runner['next']
+            
+        if min_node != actual:
+            actual['info'], min_node['info']= min_node['info'], actual['info']
+           
+        actual = actual['next']
+        
     return my_list
 
 # ==============
 # INSERTION SORT
 # ==============
         
-def insertion_sort (my_list, sort_crit):
-    
-    for i in range(1, size(my_list)):
-        elem_actual = get_element(my_list, i)
-        j = i
-        while j > 0 and sort_crit(elem_actual, get_element(my_list, j-1)):
-            my_list = exchange(my_list, j-1, j)
-            j -= 1
-    
+def insertion_sort(my_list, sort_crit):
+    if my_list['first'] is None or my_list['first']['next'] is None:
+        return my_list
+
+    sorted_head = my_list['first']
+    actual = sorted_head['next']
+    sorted_head['next'] = None    # la lista ordenada empieza con un solo nodo
+
+    while actual is not None:
+        siguiente = actual['next']
+        actual['next'] = None
+
+        # Insertar "actual" en su posición correcta dentro de sorted_head
+        if sort_crit(actual['info'], sorted_head['info']):
+            actual['next'] = sorted_head
+            sorted_head = actual
+        else:
+            buscador = sorted_head
+            while buscador['next'] is not None and not sort_crit(actual['info'], buscador['next']['info']):
+                buscador = buscador['next']
+            actual['next'] = buscador['next']
+            buscador['next'] = actual
+
+        actual = siguiente
+
+    my_list['first'] = sorted_head
+    nodo = my_list['first']
+    while nodo['next'] is not None:
+        nodo = nodo['next']
+    my_list['last'] = nodo
+
     return my_list
 
 # ==========
@@ -215,20 +242,24 @@ def insertion_sort (my_list, sort_crit):
 # ==========
 
 def shell_sort(my_list, sort_crit):
-    
-    gap = size(my_list) // 2
-    while gap > 0:
-        for i in range(gap, size(my_list)):
-            elem_actual = get_element(my_list, i)
-            j = i
+    n = size(my_list)
+    gap = n // 2
 
-            while j >= gap and sort_crit(elem_actual, get_element(my_list, j-gap)):
-                
-                my_list = exchange(my_list, j-gap, j)
+    while gap > 0:
+        i = gap
+        while i < n:
+            actual = get_element(my_list, i)          # sigue costando O(i) recorrer hasta ahí
+            j = i
+            while j >= gap and sort_crit(actual, get_element(my_list, j - gap)):
+                # intercambio de valores usando change_info, no exchange
+                val_atras = get_element(my_list, j - gap)
+                my_list = change_info(my_list, j, val_atras)
+                my_list = change_info(my_list, j - gap, actual)
                 j -= gap
+            i += 1
         gap = gap // 2
-        
-    return  my_list
+
+    return my_list
 
 
 # ==========
