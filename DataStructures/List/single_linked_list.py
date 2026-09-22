@@ -210,13 +210,12 @@ def insertion_sort(my_list, sort_crit):
 
     sorted_head = my_list['first']
     actual = sorted_head['next']
-    sorted_head['next'] = None    # la lista ordenada empieza con un solo nodo
+    sorted_head['next'] = None   
 
     while actual is not None:
         siguiente = actual['next']
         actual['next'] = None
 
-        # Insertar "actual" en su posición correcta dentro de sorted_head
         if sort_crit(actual['info'], sorted_head['info']):
             actual['next'] = sorted_head
             sorted_head = actual
@@ -248,10 +247,10 @@ def shell_sort(my_list, sort_crit):
     while gap > 0:
         i = gap
         while i < n:
-            actual = get_element(my_list, i)          # sigue costando O(i) recorrer hasta ahí
+            actual = get_element(my_list, i)          
             j = i
             while j >= gap and sort_crit(actual, get_element(my_list, j - gap)):
-                # intercambio de valores usando change_info, no exchange
+                
                 val_atras = get_element(my_list, j - gap)
                 my_list = change_info(my_list, j, val_atras)
                 my_list = change_info(my_list, j - gap, actual)
